@@ -10,6 +10,7 @@
   --blue-main: #2f6fed;
   --blue-light: #6fa3ff;
   --green: #2e7d32;
+  --wrap: #b8d9ff;
 }
 
 * {
@@ -27,59 +28,58 @@ body {
   overflow: hidden;
 }
 
-/* Bouquet container */
+/* ================= BOUQUET ================= */
+
 .bouquet {
   position: relative;
-  width: 500px;
-  height: 500px;
+  width: 420px;
+  height: 520px;
 }
 
-/* Individual tulip */
+/* ================= TULIPS ================= */
+
 .tulip {
   position: absolute;
-  bottom: 0;
-  width: 80px;
-  height: 360px;
+  bottom: 110px;
+  width: 60px;
+  height: 320px;
   transform-origin: bottom center;
   animation:
     grow 6s ease-out forwards,
-    wind 5s ease-in-out infinite alternate;
+    wind 6s ease-in-out infinite alternate;
 }
 
-/* Stem */
 .stem {
   position: absolute;
   bottom: 0;
   left: 50%;
-  width: 8px;
-  height: 220px;
+  width: 7px;
+  height: 200px;
   background: linear-gradient(var(--green), #1b5e20);
   transform: translateX(-50%);
   border-radius: 10px;
 }
 
-/* Flower */
 .flower {
   position: absolute;
-  bottom: 200px;
+  bottom: 185px;
   left: 50%;
   transform: translateX(-50%);
-  width: 80px;
-  height: 100px;
+  width: 70px;
+  height: 90px;
 }
 
-/* Petals */
 .petal {
   position: absolute;
   bottom: 0;
-  width: 40px;
-  height: 80px;
+  width: 36px;
+  height: 70px;
   border-radius: 40px 40px 15px 15px;
   background: linear-gradient(var(--blue-light), var(--blue-main));
-  box-shadow: 0 0 18px rgba(100,150,255,0.5);
+  box-shadow: 0 0 18px rgba(120,160,255,.6);
 }
 
-.p1 { left: 20px; z-index: 3; }
+.p1 { left: 17px; z-index: 3; }
 .p2 {
   left: 0;
   transform: rotate(-15deg);
@@ -91,27 +91,60 @@ body {
   background: linear-gradient(var(--blue-main), var(--blue-dark));
 }
 
-/* Leaves */
-.leaf {
+/* ================= WRAPPER ================= */
+
+.wrapper {
   position: absolute;
-  bottom: 60px;
-  width: 60px;
-  height: 30px;
-  background: linear-gradient(var(--green), #1b5e20);
-  border-radius: 50%;
+  bottom: 0;
+  left: 50%;
+  width: 360px;
+  height: 280px;
+  transform: translateX(-50%);
+  background: linear-gradient(#d8ecff, var(--wrap));
+  clip-path: polygon(
+    0% 0%, 50% 20%, 100% 0%,
+    85% 100%, 15% 100%
+  );
+  z-index: 10;
 }
 
-.leaf.left {
-  left: -10px;
+/* ================= ROPE ================= */
+
+.rope {
+  position: absolute;
+  bottom: 130px;
+  left: 50%;
+  width: 120px;
+  height: 10px;
+  background: #fff;
+  border-radius: 10px;
+  transform: translateX(-50%);
+  z-index: 11;
+}
+
+.rope::before,
+.rope::after {
+  content: "";
+  position: absolute;
+  width: 40px;
+  height: 8px;
+  background: #fff;
+  border-radius: 10px;
+  top: 1px;
+}
+
+.rope::before {
+  left: -35px;
   transform: rotate(-25deg);
 }
 
-.leaf.right {
-  right: -10px;
+.rope::after {
+  right: -35px;
   transform: rotate(25deg);
 }
 
-/* Animations */
+/* ================= ANIMATIONS ================= */
+
 @keyframes wind {
   from { transform: rotate(-2deg); }
   to   { transform: rotate(2deg); }
@@ -131,55 +164,44 @@ body {
 </head>
 
 <body>
-<div class="bouquet">
 
-  <!-- 18 Tulips -->
-  <!-- Each tulip has slight horizontal offset + animation delay -->
+<div class="bouquet" id="bouquet">
 
-  <!-- COPY PATTERN -->
-  <!-- style="left:Xpx; animation-delay:Ys" -->
+  <!-- Wrapper & Rope -->
+  <div class="wrapper"></div>
+  <div class="rope"></div>
 
-  <!-- Tulips -->
-  <!-- Row depth effect by varying left + delay -->
-  <!-- 1 -->
-  <div class="tulip" style="left:200px; animation-delay:0s;">
+</div>
+
+<script>
+const bouquet = document.getElementById("bouquet");
+
+/* Create 18 tulips arranged in a bouquet arc */
+for (let i = 0; i < 18; i++) {
+  const tulip = document.createElement("div");
+  tulip.className = "tulip";
+
+  const spread = 160;
+  const center = 210;
+  const x = center + (i - 8.5) * 18;
+  const tilt = (i - 8.5) * 2;
+
+  tulip.style.left = x + "px";
+  tulip.style.transform = `rotate(${tilt}deg)`;
+  tulip.style.animationDelay = (Math.random() * 3).toFixed(2) + "s";
+
+  tulip.innerHTML = `
     <div class="stem"></div>
     <div class="flower">
       <div class="petal p1"></div>
       <div class="petal p2"></div>
       <div class="petal p3"></div>
     </div>
-    <div class="leaf left"></div>
-    <div class="leaf right"></div>
-  </div>
+  `;
 
-  <!-- Duplicate with variations -->
-  <!-- 2–18 -->
-  <script>
-    const bouquet = document.querySelector('.bouquet');
+  bouquet.appendChild(tulip);
+}
+</script>
 
-    for (let i = 1; i < 18; i++) {
-      const tulip = document.createElement('div');
-      tulip.className = 'tulip';
-      tulip.style.left = 50 + Math.random() * 380 + 'px';
-      tulip.style.animationDelay = (Math.random() * 4).toFixed(2) + 's';
-      tulip.style.animationDuration =
-        (4 + Math.random() * 3).toFixed(2) + 's';
-
-      tulip.innerHTML = `
-        <div class="stem"></div>
-        <div class="flower">
-          <div class="petal p1"></div>
-          <div class="petal p2"></div>
-          <div class="petal p3"></div>
-        </div>
-        <div class="leaf left"></div>
-        <div class="leaf right"></div>
-      `;
-      bouquet.appendChild(tulip);
-    }
-  </script>
-
-</div>
 </body>
 </html>
